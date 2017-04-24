@@ -24,15 +24,19 @@ enum Path {
 class SvgPath {
     private function new() {}
 
-    public static function parse(path:String):Maybe<Path> {
+    public static function parse(path:String):Maybe<Array<Path>> {
 	path = path.rtrim();
 
-	switch(acceptMove(path)) {
-	case Just({left: node, right: rest}):
-	    return rest == '' ? Just(node) : None;
-	case None:
-	    return None;
+	if (path == '')
+	    return Just([]);
+
+	function rec(pair) {
+	    return parse(pair.right).apply(
+		function(nodes)
+		return Just([pair.left].concat(nodes)));
 	}
+
+	return acceptMove(path).apply(rec);
     }
 
     private static function acceptMove(path:String):Maybe<Pair<Path, String>> {
