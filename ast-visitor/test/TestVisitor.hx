@@ -24,6 +24,10 @@ class MyTestVisitor extends Visitor<Int> {
     override public function visitBinop(op: Binop, e1: Expr, e2: Expr) : Maybe<Int> {
 	return MaybeUtil.map(visit(e1), visit(e2), function(a, b) return Just(a + b));
     }
+
+    override public function visitParen(e:Expr):Maybe<Int> {
+	return visit(e);
+    }
 }
 
 class TestVisitor {
@@ -32,7 +36,7 @@ class TestVisitor {
     public function new() {};
 
     public function setup() {
-	visitor = new Visitor<Int>();
+	visitor = new MyTestVisitor();
     }
 
     public function teardown() {
@@ -40,36 +44,39 @@ class TestVisitor {
 
     public function test_visit_returns_none_by_default() {
 	var input = macro 0;
-	switch visitor.visit(input) {
-		case Just(_):
-		    Assert.fail();
-		    case None:
-			Assert.pass();
-	    }
+	visitor = new Visitor<Int>();
+	switch(visitor.visit(input)) {
+	case Just(_):
+	    Assert.fail();
+	case None:
+	    Assert.pass();
+	}
     }
 
     public function test_visitChildren_returns_none_by_default() {
 	var input = macro 0 + 0;
-	switch visitor.visitChildren(input) {
-		case Just(_):
-		    Assert.fail();
-		    case None:
-			Assert.pass();
-	    }
+	visitor = new Visitor<Int>();
+	switch(visitor.visitChildren(input)) {
+	case Just(_):
+	    Assert.fail();
+	case None:
+	    Assert.pass();
+	}
     }
 
     public function test_visit_calls_visitConst() {
-	visitor = new MyTestVisitor();
 	Assert.same(Just(0), visitor.visit(macro 0));
     }
 
     public function test_visit_calls_visitArray() {
-	visitor = new MyTestVisitor();
 	Assert.same(Just(5), visitor.visit(macro array[5]));
     }
 
     public function test_visit_calls_visitBinop() {
-	visitor = new MyTestVisitor();
 	Assert.same(Just(2), visitor.visit(macro 1 + 1));
+    }
+
+    public function test_visit_calls_visitParen() {
+	Assert.same(Just(3), visitor.visit(macro 1 + (1 + 1)));
     }
 }

@@ -16,7 +16,7 @@ class Visitor<T> {
 	case EField( e, field ):
 
 	case EParenthesis( e ):
-
+	    return visitParen(e);
 	case EObjectDecl( fields ):
 
 	case EArrayDecl( values ):
@@ -146,6 +146,10 @@ class Visitor<T> {
     }
 
     public function visitBinop(op:Binop, e1:Expr, e2:Expr):Maybe<T> {
+	return None;
+    }
+
+    public function visitParen(e:Expr):Maybe<T> {
 	return None;
     }
 }
