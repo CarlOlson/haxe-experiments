@@ -40,6 +40,8 @@ class SvgPath {
 	if (nodes == None)
 	    nodes = acceptMove(path).apply(rec);
 	if (nodes == None)
+	    nodes = acceptLine(path).apply(rec);
+	if (nodes == None)
 	    nodes = acceptClose(path).apply(rec);
 	return nodes;
     }
@@ -54,6 +56,24 @@ class SvgPath {
 		return justPair(Move(Absolute, point), rest);
 	    } else if (path.startsWith('m')) {
 		return justPair(Move(Relative, point), rest);
+	    } else {
+		return None;
+	    }
+	default:
+	    return None;
+	}
+    }
+
+    private static function acceptLine(path:String):Maybe<Pair<Path, String>> {
+	path = path.ltrim();
+	var point = acceptPoint(path.substring(1));
+
+	switch(point) {
+	case Just({left: point, right: rest}):
+	    if (path.startsWith('L')) {
+		return justPair(Line(Absolute, point), rest);
+	    } else if (path.startsWith('l')) {
+		return justPair(Line(Relative, point), rest);
 	    } else {
 		return None;
 	    }

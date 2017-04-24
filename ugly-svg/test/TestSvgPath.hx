@@ -45,4 +45,14 @@ class TestSvgPath {
 	Assert.same(Just([Close]),
 		    SvgPath.parse("Z"));
     }
+
+    public function test_can_parse_line() {
+	Assert.same(Just([Line(Absolute, {x: 0, y: 0})]),
+		    SvgPath.parse("L0 0"));
+
+	Assert.same(Just([Line(Relative, {x: 0, y: 0})]),
+		    SvgPath.parse("l0 0"));
+    }
 }
+
+// Cc Ll
