@@ -1,5 +1,6 @@
 using StringTools;
 using Maybe;
+import haxe.macro.*;
 
 typedef Point = { x:Float, y:Float };
 
@@ -42,23 +43,21 @@ class SvgPath {
 	if (nodes == None)
 	    nodes = acceptLine(path).apply(rec);
 	if (nodes == None)
+	    nodes = acceptCubic(path).apply(rec);
+	if (nodes == None)
 	    nodes = acceptClose(path).apply(rec);
 	return nodes;
     }
 
     private static function acceptMove(path:String):Maybe<Pair<Path, String>> {
         path = path.ltrim();
-	var point = acceptPoint(path.substring(1));
 
-	switch(point) {
+	if (!atCommand(path, 'm'))
+	    return None;
+
+	switch(acceptPoint(path.substring(1))) {
 	case Just({left: point, right: rest}):
-	    if (path.startsWith('M')) {
-		return justPair(Move(Absolute, point), rest);
-	    } else if (path.startsWith('m')) {
-		return justPair(Move(Relative, point), rest);
-	    } else {
-		return None;
-	    }
+	    return justPair(Move(kindOf(path), point), rest);
 	default:
 	    return None;
 	}
@@ -66,18 +65,32 @@ class SvgPath {
 
     private static function acceptLine(path:String):Maybe<Pair<Path, String>> {
 	path = path.ltrim();
-	var point = acceptPoint(path.substring(1));
 
-	switch(point) {
+	if (!atCommand(path, 'l'))
+	    return None;
+
+	switch(acceptPoint(path.substring(1))) {
 	case Just({left: point, right: rest}):
-	    if (path.startsWith('L')) {
-		return justPair(Line(Absolute, point), rest);
-	    } else if (path.startsWith('l')) {
-		return justPair(Line(Relative, point), rest);
-	    } else {
-		return None;
-	    }
+	    return justPair(Line(kindOf(path), point), rest);
 	default:
+	    return None;
+	}
+    }
+
+    private static function acceptCubic(path:String):Maybe<Pair<Path, String>> {
+    	path = path.ltrim();
+
+        if (!atCommand(path, 'c'))
+	    return None;
+
+	var point1, point2, point3,
+	    rest = path.substring(1);
+
+	if (bindPair(acceptPoint(rest), point1, rest) &&
+	    bindPair(acceptPoint(rest), point2, rest) &&
+	    bindPair(acceptPoint(rest), point3, rest)) {
+	    return justPair(Cubic(kindOf(path), point1, point2, point3), rest);
+	} else {
 	    return None;
 	}
     }
@@ -85,7 +98,7 @@ class SvgPath {
     private static function acceptClose(path:String):Maybe<Pair<Path, String>> {
 	path = path.ltrim();
 
-	if (path.startsWith('z') || path.startsWith('Z')) {
+	if (atCommand(path, 'z')) {
 	    return justPair(Close, path.substring(1));
 	} else {
 	    return None;
@@ -105,7 +118,30 @@ class SvgPath {
 	}
     }
 
+    private static function kindOf(path:String):Kind {
+	return ~/[A-Z]/.match(path.charAt(0)) ? Absolute : Relative;
+    }
+
+    private static function atCommand(path:String, cmd:String):Bool {
+	return (path.startsWith(cmd.toLowerCase()) ||
+		path.startsWith(cmd.toUpperCase()));
+    }
+
     private static function justPair<T>(node:T, rest:String):Maybe<Pair<T, String>> {
 	return Just({ left: node, right: rest });
+    }
+
+    macro public static function bindPair<T, R>(pair: ExprOf<Pair<T, R>>, left: ExprOf<T>, right: ExprOf<R>) {
+	return macro
+	    switch($pair) {
+	    case Just(_pair):
+		$left = _pair.left;
+		$right = _pair.right;
+		true;
+	    case None:
+		$left = null;
+		$right = null;
+		false;
+	    };
     }
 }

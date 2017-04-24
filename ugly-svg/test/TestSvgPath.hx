@@ -58,3 +58,30 @@ class TestSvgPath {
 		    SvgPath.parse("l0 0"));
     }
 
+    public function test_can_parse_cubic_bezier() {
+	Assert.same(Just([Cubic(Absolute, point0, point1, point2)]),
+		    SvgPath.parse("C0 0 1 1 2 2"));
+
+	Assert.same(Just([Cubic(Relative, point0, point1, point2)]),
+		    SvgPath.parse("c0 0 1 1 2 2"));
+    }
+
+    // bind(
+    //     point1, path = acceptPoint(path)
+    //     );
+    // macro public function bind(exprs: Array<Expr>) {
+    // 	for(e in exprs)
+    // 	    switch(e.expr) {
+    // 	    case EConst(CIdent(v)):
+    // 		trace("Var: " + v);
+    // 	    case EBinop(op, {expr: EConst(CIdent(v))}, fn):
+    // 		trace("Op: " + op);
+    // 		trace("Var: " + v);
+    // 		trace("Fun: " + fn);
+    // 	    case EMeta(_, _):
+    // 	    default:
+    // 		trace("ERROR!");
+    // 	    }
+    // 	return macro null;
+    // }
+}
