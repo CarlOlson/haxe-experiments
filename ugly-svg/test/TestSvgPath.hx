@@ -37,4 +37,12 @@ class TestSvgPath {
 			  Move(Absolute, {x: 1, y: 1})]),
 		    SvgPath.parse("M0 0 M1 1"));
     }
+
+    public function test_can_parse_z_close() {
+	Assert.same(Just([Close]),
+		    SvgPath.parse("z"));
+
+	Assert.same(Just([Close]),
+		    SvgPath.parse("Z"));
+    }
 }

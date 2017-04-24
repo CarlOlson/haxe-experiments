@@ -36,7 +36,12 @@ class SvgPath {
 		return Just([pair.left].concat(nodes)));
 	}
 
-	return acceptMove(path).apply(rec);
+	var nodes = None;
+	if (nodes == None)
+	    nodes = acceptMove(path).apply(rec);
+	if (nodes == None)
+	    nodes = acceptClose(path).apply(rec);
+	return nodes;
     }
 
     private static function acceptMove(path:String):Maybe<Pair<Path, String>> {
@@ -53,6 +58,16 @@ class SvgPath {
 		return None;
 	    }
 	default:
+	    return None;
+	}
+    }
+
+    private static function acceptClose(path:String):Maybe<Pair<Path, String>> {
+	path = path.ltrim();
+
+	if (path.startsWith('z') || path.startsWith('Z')) {
+	    return justPair(Close, path.substring(1));
+	} else {
 	    return None;
 	}
     }
