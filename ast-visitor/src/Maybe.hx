@@ -12,4 +12,8 @@ class MaybeUtil {
 	    return None;
         }
     }
+
+    public static function map<T>(m1:Maybe<T>, m2:Maybe<T>, fn:(T -> T -> Maybe<T>)) : Maybe<T> {
+	return apply(m1, function(a) return apply(m2, function(b) return fn(a, b)));
+    }
 }
