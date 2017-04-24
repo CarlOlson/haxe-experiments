@@ -19,7 +19,6 @@ class UglySVG {
 
     public function uglify() {
 	for(path in xml.firstElement().elementsNamed('path')) {
-	    trace(path.get('d'));
 	    path.set('d', '!');
 	}
     }
