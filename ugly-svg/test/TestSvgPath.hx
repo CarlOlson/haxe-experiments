@@ -3,6 +3,10 @@ import SvgPath;
 import Maybe;
 
 class TestSvgPath {
+    var point0 = {x: 0.0, y: 0.0};
+    var point1 = {x: 1.0, y: 1.0};
+    var point2 = {x: 2.0, y: 2.0};
+
     public function new() {}
 
     public function test_can_parse_move() {
@@ -19,22 +23,22 @@ class TestSvgPath {
     }
 
     public function test_ignores_extra_spaces() {
-	Assert.same(Just([Move(Absolute, {x:0, y:0})]),
+	Assert.same(Just([Move(Absolute, point0)]),
 		    SvgPath.parse("M 0 0"),
 		    "extra space after command letter");
 
-	Assert.same(Just([Move(Absolute, {x:0, y:0})]),
+	Assert.same(Just([Move(Absolute, point0)]),
 		    SvgPath.parse(" M0 0"),
 		    "extra space at left of path");
 
-	Assert.same(Just([Move(Absolute, {x:0, y:0})]),
+	Assert.same(Just([Move(Absolute, point0)]),
 		    SvgPath.parse("M0 0 "),
 		    "extra space at right of path");
     }
 
     public function test_can_parse_many_commands() {
-	Assert.same(Just([Move(Absolute, {x: 0, y: 0}),
-			  Move(Absolute, {x: 1, y: 1})]),
+	Assert.same(Just([Move(Absolute, point0),
+			  Move(Absolute, point1)]),
 		    SvgPath.parse("M0 0 M1 1"));
     }
 
@@ -47,12 +51,10 @@ class TestSvgPath {
     }
 
     public function test_can_parse_line() {
-	Assert.same(Just([Line(Absolute, {x: 0, y: 0})]),
+	Assert.same(Just([Line(Absolute, point0)]),
 		    SvgPath.parse("L0 0"));
 
-	Assert.same(Just([Line(Relative, {x: 0, y: 0})]),
+	Assert.same(Just([Line(Relative, point0)]),
 		    SvgPath.parse("l0 0"));
     }
-}
 
-// Cc Ll
