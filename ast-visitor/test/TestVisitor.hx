@@ -3,7 +3,7 @@ import Maybe;
 using haxe.macro.Expr;
 
 class MyTestVisitor extends Visitor<Int> {
-    override public function visitConst(const : Constant) : Maybe<Int> {
+    override public function visitConst(const:Constant):Maybe<Int> {
 	switch(const) {
 	case CInt(v):
 	    return Just(Std.parseInt(v));
@@ -12,7 +12,7 @@ class MyTestVisitor extends Visitor<Int> {
 	}
     }
 
-    override public function visitArray(e1:Expr, e2:Expr) : Maybe<Int> {
+    override public function visitArray(e1:Expr, e2:Expr):Maybe<Int> {
 	switch(e2.expr) {
 	case EConst(CInt(v)):
 	    return Just(Std.parseInt(v));
@@ -21,7 +21,7 @@ class MyTestVisitor extends Visitor<Int> {
 	}
     }
 
-    override public function visitBinop(op: Binop, e1: Expr, e2: Expr) : Maybe<Int> {
+    override public function visitBinop(op: Binop, e1: Expr, e2: Expr):Maybe<Int> {
 	return MaybeUtil.map(visit(e1), visit(e2), function(a, b) return Just(a + b));
     }
 
