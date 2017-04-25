@@ -1,12 +1,11 @@
 using StringTools;
-using Maybe;
-import haxe.macro.*;
+import monads.Monads.*;
+import monads.Maybe;
+import monads.Pair;
 
 typedef Point = { x:Float, y:Float };
 
 typedef PointSlope = { point:Point, slope:Float };
-
-typedef Pair<T, R> = { left:T, right:R };
 
 enum Kind {
     Relative;
@@ -55,10 +54,12 @@ class SvgPath {
 	if (!atCommand(path, 'm'))
 	    return None;
 
-	switch(acceptPoint(path.substring(1))) {
-	case Just({left: point, right: rest}):
+	var point = null,
+	    rest = path.substring(1);
+
+	if (bindPair(acceptPoint(rest), point, rest)) {
 	    return justPair(Move(kindOf(path), point), rest);
-	default:
+	} else {
 	    return None;
 	}
     }
@@ -69,10 +70,12 @@ class SvgPath {
 	if (!atCommand(path, 'l'))
 	    return None;
 
-	switch(acceptPoint(path.substring(1))) {
-	case Just({left: point, right: rest}):
+	var point = null,
+	    rest = path.substring(1);
+
+	if (bindPair(acceptPoint(rest), point, rest)) {
 	    return justPair(Line(kindOf(path), point), rest);
-	default:
+	} else {
 	    return None;
 	}
     }
@@ -83,7 +86,9 @@ class SvgPath {
         if (!atCommand(path, 'c'))
 	    return None;
 
-	var point1, point2, point3,
+	var point1 = null,
+	    point2 = null,
+	    point3 = null,
 	    rest = path.substring(1);
 
 	if (bindPair(acceptPoint(rest), point1, rest) &&
@@ -128,20 +133,6 @@ class SvgPath {
     }
 
     private static function justPair<T>(node:T, rest:String):Maybe<Pair<T, String>> {
-	return Just({ left: node, right: rest });
-    }
-
-    macro public static function bindPair<T, R>(pair: ExprOf<Pair<T, R>>, left: ExprOf<T>, right: ExprOf<R>) {
-	return macro
-	    switch($pair) {
-	    case Just(_pair):
-		$left = _pair.left;
-		$right = _pair.right;
-		true;
-	    case None:
-		$left = null;
-		$right = null;
-		false;
-	    };
+	return Just(makePair(node, rest));
     }
 }
