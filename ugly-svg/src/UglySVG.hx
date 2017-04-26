@@ -30,16 +30,13 @@ class UglySVG {
 
     private static function linearizeCubic(kind:Kind, startPoint:Point, startCtrl:Point,
 					   endCtrl:Point, endPoint:Point, minLength:Float):Array<Path> {
-	var pathLength:Float;
-
 	if (kind == Relative) {
-	    startPoint = {x: 0.0, y: 0.0};
-	    pathLength = cubicLength({x: 0.0, y: 0.0}, startCtrl, endCtrl, endPoint);
-	} else {
-	    pathLength = cubicLength(startPoint, startCtrl, endCtrl, endPoint);
+	    startPoint = Point.origin;
 	}
 
-	if (pathLength < minLength) {
+	var pathLength = cubicLength(startPoint, startCtrl, endCtrl, endPoint);
+
+	if (minLength * 2 > pathLength) {
 	    return [Line(kind, endPoint)];
 	}
 

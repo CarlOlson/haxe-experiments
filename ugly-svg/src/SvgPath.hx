@@ -2,8 +2,6 @@ using StringTools;
 import monads.Monads;
 import monads.Monads.*;
 
-typedef Point = { x:Float, y:Float };
-
 typedef PointSlope = { point:Point, slope:Float };
 
 enum Kind {
@@ -116,7 +114,7 @@ class SvgPath {
 	if (regexp.match(path)) {
 	    var x = Std.parseFloat(regexp.matched(1));
 	    var y = Std.parseFloat(regexp.matched(2));
-	    return justPair({x: x, y: y}, regexp.matchedRight());
+	    return justPair(new Point(x, y), regexp.matchedRight());
 	} else {
 	    return None;
 	}

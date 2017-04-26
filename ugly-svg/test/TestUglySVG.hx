@@ -40,23 +40,24 @@ class TestUglySVG {
     }
 
     public function test_linearize_minimum_length() {
-	var p1 = {x:1.0, y:1.0},
-	    p2 = {x:0.0, y:0.0},
-	    p3 = {x:1.0, y:0.0};
+	var length = UglySVG.cubicLength(startPoint, startCtrl, endCtrl, endPoint);
 
-	var minLength = 1.5;
+	function testKind(kind) {
+	    Assert.same([Line(kind, endPoint)],
+			UglySVG.linearizeCubic(kind, startPoint, startCtrl, endCtrl, endPoint, length * 0.51));
 
-        Assert.same([Line(Absolute, {x:1, y:0})],
-		    UglySVG.linearizeCubic(Absolute, {x:0.0, y:0.0}, p1, p2, p3, minLength));
+	    Assert.same([Line(kind, endPoint)],
+			UglySVG.linearizeCubic(kind, startPoint, startCtrl, endCtrl, endPoint, length * 1.01));
+	}
 
-	Assert.same([Line(Relative, {x:1, y:0})],
-		    UglySVG.linearizeCubic(Relative, {x:0.0, y:0.0}, p1, p2, p3, minLength));
+	testKind(Absolute);
+	testKind(Relative);
     }
 
     public function test_distance() {
-	Assert.equals(UglySVG.distance({x:0.0, y:0.0}, {x:1.0, y:0.0}),
+	Assert.equals(UglySVG.distance(Point.origin, {x:1.0, y:0.0}),
 		      1.0);
-	Assert.floatEquals(UglySVG.distance({x:0.0, y:0.0}, {x:2.0, y:3.0}),
+	Assert.floatEquals(UglySVG.distance(Point.origin, {x:2.0, y:3.0}),
 			   Math.sqrt(13));
     }
 
