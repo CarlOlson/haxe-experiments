@@ -1,8 +1,0 @@
-#! /usr/bin/env nix-shell
-#! nix-shell --pure -i bash
-
-if ! haxelib list | grep -q utest; then
-   haxelib install utest
-fi
-
-haxe test.hxml
