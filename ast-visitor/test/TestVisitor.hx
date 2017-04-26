@@ -1,28 +1,31 @@
 import utest.Assert;
-import Maybe;
+import monads.Maybe;
+import monads.Monads.*;
 using haxe.macro.Expr;
 
 class MyTestVisitor extends Visitor<Int> {
     override public function visitConst(const:Constant):Maybe<Int> {
 	switch(const) {
 	case CInt(v):
-	    return Just(Std.parseInt(v));
+	    return just(Std.parseInt(v));
 	default:
-	    return None;
+	    return none();
 	}
     }
 
     override public function visitArray(e1:Expr, e2:Expr):Maybe<Int> {
 	switch(e2.expr) {
 	case EConst(CInt(v)):
-	    return Just(Std.parseInt(v));
+	    return just(Std.parseInt(v));
 	default:
-	    return None;
+	    return none();
 	}
     }
 
     override public function visitBinop(op: Binop, e1: Expr, e2: Expr):Maybe<Int> {
-	return MaybeUtil.map(visit(e1), visit(e2), function(a, b) return Just(a + b));
+	return visit(e1).apply(function (a)
+			       return visit(e2).apply(function (b)
+						      return just(a + b)));
     }
 
     override public function visitParen(e:Expr):Maybe<Int> {
