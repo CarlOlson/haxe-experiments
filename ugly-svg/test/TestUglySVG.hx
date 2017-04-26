@@ -5,15 +5,20 @@ import SvgPath;
 class TestUglySVG {
     var svg:UglySVG;
 
-    var startPoint = {x:120.0, y:160.0};
-    var startCtrl = {x:35.0, y:200.0};
-    var endCtrl = {x:220.0, y:260.0};
-    var endPoint = {x:220.0, y:40.0};
+    var startPoint:Point;
+    var startCtrl:Point;
+    var endCtrl:Point;
+    var endPoint:Point;
 
     public function new() {};
 
     public function setup() {
 	svg = UglySVG.create('heart.svg');
+
+	startPoint = {x:120.0, y:160.0};
+	startCtrl = {x:35.0, y:200.0};
+	endCtrl = {x:220.0, y:260.0};
+	endPoint = {x:220.0, y:40.0};
     }
 
     public function teardown() {}
@@ -51,6 +56,10 @@ class TestUglySVG {
 	}
 
 	testKind(Absolute);
+
+	startCtrl -= startPoint;
+	endCtrl -= startPoint;
+	endPoint -= startPoint;
 	testKind(Relative);
     }
 
