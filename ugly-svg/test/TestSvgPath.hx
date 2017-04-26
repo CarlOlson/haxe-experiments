@@ -65,4 +65,26 @@ class TestSvgPath {
 	Assert.same(just([Cubic(Relative, point0, point1, point2)]),
 		    SvgPath.parse("c0 0 1 1 2 2"));
     }
+
+    public function test_can_turn_path_to_string() {
+	var path;
+
+	Assert.same('', SvgPath.asString([]));
+	Assert.same('', SvgPath.asString(null));
+
+	path = [Move(Absolute, point0),
+		Move(Relative, point0)];
+	Assert.same(just(path), SvgPath.parse(SvgPath.asString(path)), 'move');
+
+	path = [Line(Absolute, point0),
+		Line(Relative, point0)];
+	Assert.same(just(path), SvgPath.parse(SvgPath.asString(path)), 'line');
+
+	path = [Close];
+	Assert.same(just(path), SvgPath.parse(SvgPath.asString(path)), 'close');
+
+	path = [Cubic(Absolute, point0, point1, point2),
+		Cubic(Relative, point0, point1, point2)];
+	Assert.same(just(path), SvgPath.parse(SvgPath.asString(path)), 'cubic');
+    }
 }

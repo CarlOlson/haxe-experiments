@@ -132,4 +132,37 @@ class SvgPath {
     private static function justPair<T>(node:T, rest:String):Maybe<Pair<T, String>> {
 	return Just(makePair(node, rest));
     }
+
+    public static function asString(path:Array<Path>):String {
+	if (path == null || path.length == 0)
+	    return '';
+
+	var str = switch(path[0]) {
+	case Move(kind, p):
+	cmdAsString('m', kind) + pointAsString(p);
+	case Line(kind, p):
+	cmdAsString('l', kind) + pointAsString(p);
+	case Cubic(kind, p1, p2, p3):
+	'${cmdAsString("c", kind)}${pointAsString(p1)} ${pointAsString(p2)} ${pointAsString(p3)}';
+	case Close:
+	    'z';
+	default:
+	    '';
+	};
+
+	return str + asString(path.slice(1));
+    }
+
+    private static function pointAsString(p:Point):String {
+	return '${p.x} ${p.y}';
+    }
+
+    private static function cmdAsString(cmd:String, kind:Kind):String {
+	switch(kind) {
+	case Absolute:
+	    return cmd.toUpperCase();
+	case Relative:
+	    return cmd.toLowerCase();
+	}
+    }
 }
