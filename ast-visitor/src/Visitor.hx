@@ -1,5 +1,5 @@
 using haxe.macro.Expr;
-import monads.Maybe;
+import monads.Monads;
 
 class Visitor<T> {
 

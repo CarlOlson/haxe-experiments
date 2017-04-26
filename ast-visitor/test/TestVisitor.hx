@@ -1,6 +1,6 @@
 import utest.Assert;
-import monads.Maybe;
 import monads.Monads.*;
+import monads.core.Maybe;
 using haxe.macro.Expr;
 
 class MyTestVisitor extends Visitor<Int> {

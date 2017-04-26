@@ -1,7 +1,6 @@
 using StringTools;
+import monads.Monads;
 import monads.Monads.*;
-import monads.Maybe;
-import monads.Pair;
 
 typedef Point = { x:Float, y:Float };
 
@@ -36,7 +35,7 @@ class SvgPath {
 		return Just([pair.left].concat(nodes)));
 	}
 
-	var nodes = None;
+	var nodes = none();
 	if (nodes == None)
 	    nodes = acceptMove(path).apply(rec);
 	if (nodes == None)
