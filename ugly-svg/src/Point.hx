@@ -17,7 +17,14 @@ abstract Point(PointImpl<Float>) from PointImpl<Float> to PointImpl<Float> {
 	return this.y;
 
     @:from
-    static public function fromPointImpl<T>(point:PointImpl<T>):Point {
+    static inline public function fromPointImpl<T>(point:PointImpl<T>):Point
 	return new Point(cast point.x, cast point.y);
-    }
+
+    @:op(A - B)
+    static inline public function minusPoint(a:Point, b:Point):Point
+        return new Point(a.x - b.x, a.y - b.y);
+
+    @:op(-A)
+    static inline public function negatePoint(a:Point):Point
+        return new Point(-a.x, -a.y);
 }
