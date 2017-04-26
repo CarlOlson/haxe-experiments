@@ -27,4 +27,10 @@ abstract Point(PointImpl<Float>) from PointImpl<Float> to PointImpl<Float> {
     @:op(-A)
     static inline public function negatePoint(a:Point):Point
         return new Point(-a.x, -a.y);
+
+    inline public function distance(other:Point):Float {
+	var dx = this.x - other.x,
+	    dy = this.y - other.y;
+	return Math.sqrt(dx * dx + dy * dy);
+    }
 }

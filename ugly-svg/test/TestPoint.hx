@@ -19,4 +19,10 @@ class TestPoint {
 	Assert.same(new Point(2.0, 3.0), point1 - point2);
     }
 
+    public function test_distance() {
+	Assert.equals(1.0,
+		      Point.origin.distance({x:1.0, y:0.0}));
+	Assert.floatEquals(Math.sqrt(13),
+			   Point.origin.distance({x:2.0, y:3.0}));
+    }
 }

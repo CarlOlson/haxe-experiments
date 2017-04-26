@@ -50,7 +50,7 @@ class UglySVG {
 
 	for (i in 1...(n+1)) {
 	    var currPoint = cubicPoint(i / n, startPoint, startCtrl, endCtrl, endPoint);
-	    length += distance(lastPoint, currPoint);
+	    length += lastPoint.distance(currPoint);
 	    lastPoint = currPoint;
 	}
 
@@ -67,12 +67,5 @@ class UglySVG {
 	    y = startPoint.y * dt3 + startCtrl.y * 3 * dt2 * t + endCtrl.y * 3 * dt * t2 + endPoint.y * t3;
 
 	return {x: x, y: y};
-    }
-
-    private static function distance(a:Point, b:Point):Float {
-	var dx = (a.x - b.x),
-	    dy = (a.y - b.y);
-
-	return Math.sqrt(dx * dx + dy * dy);
     }
 }

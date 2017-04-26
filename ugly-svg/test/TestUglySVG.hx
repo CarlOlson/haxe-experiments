@@ -54,13 +54,6 @@ class TestUglySVG {
 	testKind(Relative);
     }
 
-    public function test_distance() {
-	Assert.equals(UglySVG.distance(Point.origin, {x:1.0, y:0.0}),
-		      1.0);
-	Assert.floatEquals(UglySVG.distance(Point.origin, {x:2.0, y:3.0}),
-			   Math.sqrt(13));
-    }
-
     public function test_cubicLength() {
 	var length = UglySVG.cubicLength(startPoint, startCtrl, endCtrl, endPoint);
 
