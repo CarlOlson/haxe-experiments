@@ -40,7 +40,15 @@ class UglySVG {
 	    return [Line(kind, endPoint)];
 	}
 
-	return null;
+	var n = Math.round(pathLength / minLength),
+	    path = [];
+
+	for(i in 0...(n+1)) {
+	    var point = cubicPoint(i / n, startPoint, startCtrl, endCtrl, endPoint);
+	    path.push(Line(kind, point));
+	}
+
+	return path;
     }
 
     private static function cubicLength(startPoint:Point, startCtrl:Point, endCtrl:Point, endPoint:Point):Float {

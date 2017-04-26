@@ -44,7 +44,22 @@ class TestUglySVG {
 	}
     }
 
-    public function test_linearize_minimum_length() {
+    public function test_cubicLength() {
+	var length = UglySVG.cubicLength(startPoint, startCtrl, endCtrl, endPoint);
+
+	Assert.floatEquals(272.87, length, 0.65);
+    }
+
+    public function test_cubicPoint() {
+	function pointAtTime(t) {
+	    return UglySVG.cubicPoint(t, startPoint, startCtrl, endCtrl, endPoint);
+	}
+
+	Assert.same(startPoint, pointAtTime(0), 'equals start point at t = 0');
+	Assert.same(endPoint, pointAtTime(1.0), 'equals end point at t = 1');
+    }
+
+    public function test_linearizeCubic_with_short_paths() {
 	var length = UglySVG.cubicLength(startPoint, startCtrl, endCtrl, endPoint);
 
 	function testKind(kind) {
@@ -63,18 +78,11 @@ class TestUglySVG {
 	testKind(Relative);
     }
 
-    public function test_cubicLength() {
+    public function test_linearizeCubic_with_long_paths() {
 	var length = UglySVG.cubicLength(startPoint, startCtrl, endCtrl, endPoint);
 
-	Assert.floatEquals(272.87, length, 0.65);
-    }
+	var path = UglySVG.linearizeCubic(Absolute, startPoint, startCtrl, endCtrl, endPoint, length / 9);
 
-    public function test_cubicPoint() {
-	function pointAtTime(t) {
-	    return UglySVG.cubicPoint(t, startPoint, startCtrl, endCtrl, endPoint);
-	}
-
-	Assert.same(startPoint, pointAtTime(0), 'equals start point at t = 0');
-	Assert.same(endPoint, pointAtTime(1.0), 'equals end point at t = 1');
+	Assert.equals(10, path.length);
     }
 }
