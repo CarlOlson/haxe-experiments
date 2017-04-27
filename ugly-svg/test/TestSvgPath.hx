@@ -87,4 +87,12 @@ class TestSvgPath {
 		Cubic(Relative, point0, point1, point2)];
 	Assert.same(just(path), SvgPath.parse(SvgPath.asString(path)), 'cubic');
     }
+
+    public function test_support_commas_for_points() {
+	var path = SvgPath.parse('M 272,195 L 272.75,196.75 L 272,195 z');
+	if (path == none())
+	    Assert.fail('unable to parse commas');
+	else
+	    Assert.pass();
+    }
 }
