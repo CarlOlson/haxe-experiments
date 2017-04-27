@@ -109,7 +109,7 @@ class SvgPath {
 
     private static function acceptPoint(path:String):Maybe<Pair<Point, String>> {
 	path = path.ltrim();
-	var regexp = ~/^(\d+\.?\d*)(?:,| )(\d+\.?\d*)/;
+	var regexp = ~/^(-?\d+\.?\d*)(?:,| )(-?\d+\.?\d*)/;
 
 	if (regexp.match(path)) {
 	    var x = Std.parseFloat(regexp.matched(1));

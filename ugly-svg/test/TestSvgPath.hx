@@ -89,10 +89,13 @@ class TestSvgPath {
     }
 
     public function test_support_commas_for_points() {
-	var path = SvgPath.parse('M 272,195 L 272.75,196.75 L 272,195 z');
-	if (path == none())
-	    Assert.fail('unable to parse commas');
-	else
-	    Assert.pass();
+	Assert.isTrue(SvgPath.parse('M 272,195 L 272.75,196.75 L 272,195 z') != none(),
+		      'unable to parse commas');
+    }
+
+    public function test_support_negative_point_values() {
+	Assert.isTrue(SvgPath.parse('M -3,0 M0 -4') != none(),
+		      'unable to parse negative numbers');
+    }
     }
 }
