@@ -1,5 +1,6 @@
 import sys.io.File;
 import SvgPath;
+using StringTools;
 
 class UglySVG {
     private var xml:Xml;
@@ -18,36 +19,47 @@ class UglySVG {
 	}
     }
 
-    public function uglify(minLength:Float = 1) {
-	var lastPoint = Point.origin;
+    private function uglifyPath(path:Array<Path>, minLength:Float):Array<Path> {
+	var lastPoint = Point.origin,
+	    newpath = [];
 
-	for(node in xml.firstElement().elementsNamed('path')) {
-	    switch(SvgPath.parse(node.get('d'))) {
-	    case Just(path):
-		var newpath = [];
-
-		for (p in path) {
-		    switch(p) {
-		    case Move(kind, point):
-			lastPoint = point;
-			newpath.push(p);
-		    case Line(kind, point):
-			lastPoint = point;
-			newpath.push(p);
-		    case Cubic(kind, p1, p2, p3):
-			var points = linearizeCubic(kind, lastPoint, p1, p2, p3, minLength);
-			lastPoint = p3;
-			for (point in points)
-			    newpath.push(point);
-		    default:
-			newpath.push(p);
-		    }
-		}
-
-		node.set('d', SvgPath.asString(newpath));
-	    case None:
+	for (p in path) {
+	    switch(p) {
+	    case Move(kind, point):
+		lastPoint = point;
+		newpath.push(p);
+	    case Line(kind, point):
+		lastPoint = point;
+		newpath.push(p);
+	    case Cubic(kind, p1, p2, p3):
+		var points = linearizeCubic(kind, lastPoint, p1, p2, p3, minLength);
+		lastPoint = p3;
+		for (point in points)
+		    newpath.push(point);
+	    default:
+		newpath.push(p);
 	    }
 	}
+
+        return newpath;
+    }
+
+    private function uglifyElement(element:Xml, minLength:Float) {
+	for(node in element.elements()) {
+	    if (node.nodeName == 'path') {
+		switch(SvgPath.parse(node.get('d'))) {
+		case Just(path):
+		    node.set('d', SvgPath.asString(uglifyPath(path, minLength)));
+		case None:
+		}
+	    } else {
+		uglifyElement(node, minLength);
+	    }
+	}
+    }
+
+    public function uglify(minLength:Float = 1) {
+	uglifyElement(xml.firstElement(), minLength);
     }
 
     public function toString():String {

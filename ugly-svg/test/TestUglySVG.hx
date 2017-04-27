@@ -109,4 +109,12 @@ class TestUglySVG {
 
 	Assert.equals(10, path.length);
     }
+
+    public function test_supports_nested_paths() {
+	svg = UglySVG.create('nested.svg');
+	var beforeLength = svg.toString().length;
+	svg.uglify(10);
+
+	Assert.isTrue(svg.toString().length > beforeLength);
+    }
 }
