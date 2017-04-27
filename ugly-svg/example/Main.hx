@@ -1,6 +1,6 @@
 package;
 
-class Heart {
+class Main {
     public static function main() {
 	var args = Sys.args();
 
@@ -13,7 +13,7 @@ class Heart {
 
 	if (sys.FileSystem.exists(filename)) {
 	    var svg = UglySVG.create(filename);
-	    svg.uglify(25);
+	    svg.uglify(50);
 	    Sys.print(svg.toString());
 	} else {
 	    Sys.print('File $filename does not exist!');
