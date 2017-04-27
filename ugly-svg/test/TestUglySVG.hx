@@ -1,5 +1,6 @@
 import utest.Assert;
 import SvgPath;
+import monads.Monads.*;
 
 @:access(UglySVG)
 class TestUglySVG {
@@ -37,11 +38,34 @@ class TestUglySVG {
     }
 
     public function test_removes_cubic_bezier_curves() {
-	svg.uglify();
+	var sizes = [];
 	var xml = Xml.parse(svg.toString());
 	for(path in xml.firstElement().elementsNamed('path')) {
-	    Assert.match(~/^[^Cc]+$/, path.get('d'));
+	    var p = [];
+	    bind(SvgPath.parse(path.get('d')), p);
+	    sizes.push(p.length);
 	}
+
+	svg.uglify(10);
+	xml = Xml.parse(svg.toString());
+	for(path in xml.firstElement().elementsNamed('path')) {
+	    var d = path.get('d');
+	    Assert.match(~/^[^Cc]+$/, d);
+
+	    var p = [];
+	    if (bind(SvgPath.parse(d), p))
+		Assert.isTrue(p.length > sizes.pop());
+	    else
+		Assert.fail();
+	}
+    }
+
+    public function test_uglify_preserves_non_bezier_paths() {
+	svg = UglySVG.create('nonbezier.svg');
+	var original = svg.toString();
+	svg.uglify();
+
+	Assert.equals(original, svg.toString());
     }
 
     public function test_cubicLength() {

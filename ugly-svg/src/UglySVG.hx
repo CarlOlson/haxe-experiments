@@ -18,9 +18,35 @@ class UglySVG {
 	}
     }
 
-    public function uglify() {
-	for(path in xml.firstElement().elementsNamed('path')) {
-	    path.set('d', '!');
+    public function uglify(minLength:Float = 1) {
+	var lastPoint = Point.origin;
+
+	for(node in xml.firstElement().elementsNamed('path')) {
+	    switch(SvgPath.parse(node.get('d'))) {
+	    case Just(path):
+		var newpath = [];
+
+		for (p in path) {
+		    switch(p) {
+		    case Move(kind, point):
+			lastPoint = point;
+			newpath.push(p);
+		    case Line(kind, point):
+			lastPoint = point;
+			newpath.push(p);
+		    case Cubic(kind, p1, p2, p3):
+			var points = linearizeCubic(kind, lastPoint, p1, p2, p3, minLength);
+			lastPoint = p3;
+			for (point in points)
+			    newpath.push(point);
+		    default:
+			newpath.push(p);
+		    }
+		}
+
+		node.set('d', SvgPath.asString(newpath));
+	    case None:
+	    }
 	}
     }
 
