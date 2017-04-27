@@ -1,6 +1,5 @@
 import sys.io.File;
 import SvgPath;
-using StringTools;
 
 class UglySVG {
     private var xml:Xml;

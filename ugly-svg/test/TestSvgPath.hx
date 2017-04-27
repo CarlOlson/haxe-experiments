@@ -6,6 +6,9 @@ class TestSvgPath {
     var point0 = {x: 0.0, y: 0.0};
     var point1 = {x: 1.0, y: 1.0};
     var point2 = {x: 2.0, y: 2.0};
+    var point3 = {x: 3.0, y: 3.0};
+    var point4 = {x: 4.0, y: 4.0};
+    var point5 = {x: 5.0, y: 5.0};
 
     public function new() {}
 
@@ -97,5 +100,23 @@ class TestSvgPath {
 	Assert.isTrue(SvgPath.parse('M -3,0 M0 -4') != none(),
 		      'unable to parse negative numbers');
     }
+
+    public function test_support_continuous_relative_commands() {
+	Assert.same(just([Cubic(Relative, point0, point1, point2),
+			  Cubic(Relative, point3, point4, point5)]),
+		    SvgPath.parse("c0 0 1 1 2 2 3 3 4 4 5 5"),
+		    'unable to parse continuous cubics');
+
+	Assert.same(just([Line(Relative, point0),
+			  Line(Relative, point1)]),
+		    SvgPath.parse("l0 0 1 1"),
+		    'unable to parse continuous lines');
+    }
+
+    public function test_support_parse_tabs_and_newlines() {
+	var input = 'M27 69C42.3035 66.0491
+        73.1983 44.6614 67.3472
+		26.0008';
+	Assert.isTrue(SvgPath.parse(input) != none());
     }
 }
