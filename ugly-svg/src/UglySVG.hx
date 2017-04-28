@@ -18,7 +18,7 @@ class UglySVG {
 	}
     }
 
-    private function uglifyPath(path:Array<Path>, minLength:Float):Array<Path> {
+    private static function uglifyPath(path:Array<Path>, minLength:Float):Array<Path> {
 	var lastPoint = Point.origin,
 	    newpath = [];
 
@@ -43,22 +43,27 @@ class UglySVG {
         return newpath;
     }
 
-    private function uglifyElement(element:Xml, minLength:Float) {
-	for(node in element.elements()) {
-	    if (node.nodeName == 'path') {
-		switch(SvgPath.parse(node.get('d'))) {
-		case Just(path):
-		    node.set('d', SvgPath.asString(uglifyPath(path, minLength)));
-		case None:
+    public function transformPaths(fn:(Array<Path> -> Array<Path>)) {
+	function rec(element:Xml) {
+	    for(node in element.elements()) {
+		if (node.nodeName == 'path') {
+		    switch(SvgPath.parse(node.get('d'))) {
+		    case Just(path):
+			node.set('d', SvgPath.asString(fn(path)));
+		    case None:
+		    }
+		} else {
+		    rec(node);
 		}
-	    } else {
-		uglifyElement(node, minLength);
 	    }
 	}
+
+	rec(xml.firstElement());
     }
 
     public function uglify(minLength:Float = 1) {
-	uglifyElement(xml.firstElement(), minLength);
+	transformPaths(function (path)
+		       return uglifyPath(path, minLength));
     }
 
     public function toString():String {

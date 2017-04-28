@@ -117,4 +117,15 @@ class TestUglySVG {
 
 	Assert.isTrue(svg.toString().length > beforeLength);
     }
+
+    public function test_transfromPaths() {
+	var transform = UglySVG.create('heart.svg'),
+	    original = UglySVG.create('heart.svg');
+
+	transform.transformPaths(function (path) return UglySVG.uglifyPath(path, 1));
+	original.uglify(1);
+
+	Assert.same(original.toString(), transform.toString(),
+		    'transformPaths not implemented correctly');
+    }
 }
